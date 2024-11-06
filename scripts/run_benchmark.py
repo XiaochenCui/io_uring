@@ -36,8 +36,8 @@ def bench_a():
     setup()
 
     PORT = 8080
-    CLIENTS_NUMBER = 500
-    DURATION_SECONDS = 10
+    CLIENTS_NUMBER = 300
+    DURATION_SECONDS = 60
     MESSAGE_LENGTH = 128
 
     ECHO_CLIENT_DIR = os.path.join(CODE_DIR, "rust_echo_bench")
@@ -47,6 +47,12 @@ def bench_a():
         log_path="io_uring_echo_server.log",
         work_dir=os.path.join(CODE_DIR, "io_uring-echo-server"),
     )
+
+    # taskset -cp 0 [pid]
+    # xiaochen_py.run_command(
+    #     f"taskset -cp 0 {io_uring_echo_server_pid}",
+    # )
+
     xiaochen_py.run_command(
         f"cargo run --release -- --address 'localhost:{PORT}' --number {CLIENTS_NUMBER} --duration {DURATION_SECONDS} --length {MESSAGE_LENGTH}",
         work_dir=ECHO_CLIENT_DIR,
