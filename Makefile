@@ -1,4 +1,5 @@
 run_benchmark:
 	./scripts/run_benchmark.py
 
-all: run_benchmark
+show_details:
+	./scripts/show_details.py
