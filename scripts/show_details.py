@@ -10,7 +10,7 @@ def gen_data():
         return
 
     xiaochen_py.run_command(
-        f"fio --name=test_file --size=1G --filename={DATA_FILE} --bs=4k --rw=write --direct=1"
+        f"fio --name=gen_file --size=1G --filename={DATA_FILE} --bs=4k --rw=write --direct=1"
     )
 
 

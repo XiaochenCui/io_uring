@@ -1,16 +1,19 @@
 #include <liburing.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <iostream>
+#include <iostream> // for std::cout
+#include <iomanip>  // for std::hex, std::setw, and std::setfill
 
-int main() {
+int main()
+{
     // Initialize io_uring
     struct io_uring ring;
     io_uring_queue_init(8, &ring, 0);
 
     // Open the file
     int fd = open("/media/xiaochen/large/cs_data/io_uring_test/test_file", O_RDONLY);
-    if (fd < 0) {
+    if (fd < 0)
+    {
         std::cerr << "Failed to open file" << std::endl;
         return 1;
     }
@@ -28,9 +31,18 @@ int main() {
     io_uring_wait_cqe(&ring, &cqe);
 
     // Check result and print
-    if (cqe->res >= 0) {
-        std::cout.write(buffer, cqe->res);
-    } else {
+    if (cqe->res >= 0)
+    {
+        // std::cout.write(buffer, cqe->res);
+        for (int i = 0; i < cqe->res && i <= 10; ++i)
+        {
+            std::cout << std::hex << std::setw(2) << std::setfill('0')
+                      << (static_cast<unsigned int>(buffer[i]) & 0xFF) << " ";
+        }
+        std::cout << std::dec << std::endl; // Reset to decimal for other output
+    }
+    else
+    {
         std::cerr << "Read failed" << std::endl;
     }
 
