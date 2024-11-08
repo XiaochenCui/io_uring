@@ -3,12 +3,47 @@
 #include <unistd.h>
 #include <iostream> // for std::cout
 #include <iomanip>  // for std::hex, std::setw, and std::setfill
+#include <cstring>  // for memset
+
+// The default and easiest way to initialize io_uring. Return 0 for success.
+int io_uring_init_1(struct io_uring &ring)
+{
+    io_uring_queue_init(8, &ring, 0);
+    return 0;
+}
+
+// Initialize io_uring with parameters. Return 0 for success.
+int io_uring_init_2(struct io_uring &ring)
+{
+    struct io_uring_params params;
+    memset(&params, 0, sizeof(params));
+    int result = io_uring_queue_init_params(2048, &ring, &params);
+    if (result != 0)
+    {
+        perror("io_uring_init_failed...\n");
+        return result;
+    }
+
+    // check if IORING_FEAT_FAST_POLL is supported
+    if (!(params.features & IORING_FEAT_FAST_POLL))
+    {
+        printf("IORING_FEAT_FAST_POLL not available in the kernel, quiting...\n");
+        return -1;
+    }
+
+    return 0;
+}
 
 int main()
 {
-    // Initialize io_uring
     struct io_uring ring;
-    io_uring_queue_init(8, &ring, 0);
+
+    // int init_result = io_uring_init_1(ring);
+    int init_result = io_uring_init_2(ring);
+    if (init_result != 0)
+    {
+        return init_result;
+    }
 
     // Open the file
     int fd = open("/media/xiaochen/large/cs_data/io_uring_test/test_file", O_RDONLY);
