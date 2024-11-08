@@ -1,6 +1,17 @@
 #!/usr/bin/env python3
 
+import os
 import xiaochen_py
+
+
+def gen_data():
+    DATA_FILE = "/media/xiaochen/large/cs_data/io_uring_test/test_file"
+    if os.path.exists(DATA_FILE):
+        return
+
+    xiaochen_py.run_command(
+        f"fio --name=test_file --size=1G --filename={DATA_FILE} --bs=4k --rw=write --direct=1"
+    )
 
 
 def io_uring():
@@ -19,4 +30,5 @@ def io_uring():
 
 
 if __name__ == "__main__":
+    gen_data()
     io_uring()

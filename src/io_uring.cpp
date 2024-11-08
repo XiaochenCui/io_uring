@@ -9,7 +9,7 @@ int main() {
     io_uring_queue_init(8, &ring, 0);
 
     // Open the file
-    int fd = open("example.txt", O_RDONLY);
+    int fd = open("/media/xiaochen/large/cs_data/io_uring_test/test_file", O_RDONLY);
     if (fd < 0) {
         std::cerr << "Failed to open file" << std::endl;
         return 1;
