@@ -3,6 +3,7 @@
 import json
 import os
 import sys
+import time
 import xiaochen_py
 import signal
 import matplotlib.pyplot as plt
@@ -57,6 +58,10 @@ def bench_a():
         duration_seconds: int,
         message_length: int,
     ) -> xiaochen_py.BenchmarkRecord:
+        # kill the previous server
+        xiaochen_py.run_command(f"fuser -k {PORT}/tcp", raise_on_failure=False)
+        time.sleep(1)
+
         server = xiaochen_py.run_background(
             f"{binary} {PORT}",
             work_dir=IO_URING_RESEARCH_DIR,
@@ -72,6 +77,7 @@ def bench_a():
             work_dir=ECHO_CLIENT_DIR,
         )
         server.exit()
+        time.sleep(5)
 
         # sample output: Speed: 152720 request/sec, 152720 response/sec
         speed = re.search(r"Speed: (\d+) request/sec", output.decode("utf-8")).group(1)
@@ -94,7 +100,7 @@ def bench_a():
 
     client_number_list = [1, 200, 400, 600, 800, 1000]
     message_length_list = [1, 128, 1024]
-    duration_seconds = 5
+    duration_seconds = 60
 
     records = []
     for client_number in client_number_list:
@@ -122,7 +128,6 @@ def bench_a():
                 duration_seconds,
                 message_length,
             )
-        break
 
     xiaochen_py.dump_records(records, "docs/record")
 
