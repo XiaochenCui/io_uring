@@ -124,17 +124,22 @@ def bench_a():
                 message_length,
             )
             records.append(r)
+
+            # error from client:
+            # Read error! length=0
+            #
+            # r = run(
+            #     "io_uring_kernel_poll",
+            #     "./build/echo_server_io_uring_kernel_poll",
+            #     client_number,
+            #     duration_seconds,
+            #     message_length,
+            # )
+            # records.append(r)
+
             r = run(
                 "epoll",
                 "./build/echo_server_epoll",
-                client_number,
-                duration_seconds,
-                message_length,
-            )
-            records.append(r)
-            r = run(
-                "io_uring_kernel_poll",
-                "./build/echo_server_io_uring_kernel_poll",
                 client_number,
                 duration_seconds,
                 message_length,
