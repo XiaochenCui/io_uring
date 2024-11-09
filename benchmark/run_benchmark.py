@@ -89,7 +89,7 @@ def bench_a():
             work_dir=ECHO_CLIENT_DIR,
         )
         server.exit()
-        time.sleep(5)
+        time.sleep(2)
 
         # sample output: Speed: 152720 request/sec, 152720 response/sec
         speed = re.search(r"Speed: (\d+) request/sec", output.decode("utf-8")).group(1)
@@ -111,7 +111,7 @@ def bench_a():
     client_number_list = [1, 200, 400, 600, 800, 1000]
     # message_length_list = [1, 128, 1024]
     message_length_list = [1024]
-    duration_seconds = 60
+    duration_seconds = 20
 
     records = []
     for client_number in client_number_list:
