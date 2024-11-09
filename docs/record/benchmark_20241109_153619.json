@@ -1,0 +1,146 @@
+[
+    {
+        "record_time": "2024-11-09T15:17:36.040079",
+        "target_attributes": {
+            "target": "io_uring",
+            "client_number": 1,
+            "duration_seconds": 60,
+            "message_length": 1024
+        },
+        "test_result": {
+            "request_per_second": 73165
+        }
+    },
+    {
+        "record_time": "2024-11-09T15:18:42.106418",
+        "target_attributes": {
+            "target": "epoll",
+            "client_number": 1,
+            "duration_seconds": 60,
+            "message_length": 1024
+        },
+        "test_result": {
+            "request_per_second": 72939
+        }
+    },
+    {
+        "record_time": "2024-11-09T15:20:54.252432",
+        "target_attributes": {
+            "target": "io_uring",
+            "client_number": 200,
+            "duration_seconds": 60,
+            "message_length": 1024
+        },
+        "test_result": {
+            "request_per_second": 177620
+        }
+    },
+    {
+        "record_time": "2024-11-09T15:22:00.345183",
+        "target_attributes": {
+            "target": "epoll",
+            "client_number": 200,
+            "duration_seconds": 60,
+            "message_length": 1024
+        },
+        "test_result": {
+            "request_per_second": 180839
+        }
+    },
+    {
+        "record_time": "2024-11-09T15:24:12.509806",
+        "target_attributes": {
+            "target": "io_uring",
+            "client_number": 400,
+            "duration_seconds": 60,
+            "message_length": 1024
+        },
+        "test_result": {
+            "request_per_second": 168024
+        }
+    },
+    {
+        "record_time": "2024-11-09T15:25:18.598548",
+        "target_attributes": {
+            "target": "epoll",
+            "client_number": 400,
+            "duration_seconds": 60,
+            "message_length": 1024
+        },
+        "test_result": {
+            "request_per_second": 178739
+        }
+    },
+    {
+        "record_time": "2024-11-09T15:27:30.798323",
+        "target_attributes": {
+            "target": "io_uring",
+            "client_number": 600,
+            "duration_seconds": 60,
+            "message_length": 1024
+        },
+        "test_result": {
+            "request_per_second": 165511
+        }
+    },
+    {
+        "record_time": "2024-11-09T15:28:36.892858",
+        "target_attributes": {
+            "target": "epoll",
+            "client_number": 600,
+            "duration_seconds": 60,
+            "message_length": 1024
+        },
+        "test_result": {
+            "request_per_second": 169787
+        }
+    },
+    {
+        "record_time": "2024-11-09T15:30:49.090822",
+        "target_attributes": {
+            "target": "io_uring",
+            "client_number": 800,
+            "duration_seconds": 60,
+            "message_length": 1024
+        },
+        "test_result": {
+            "request_per_second": 155075
+        }
+    },
+    {
+        "record_time": "2024-11-09T15:31:55.194865",
+        "target_attributes": {
+            "target": "epoll",
+            "client_number": 800,
+            "duration_seconds": 60,
+            "message_length": 1024
+        },
+        "test_result": {
+            "request_per_second": 177305
+        }
+    },
+    {
+        "record_time": "2024-11-09T15:34:07.423718",
+        "target_attributes": {
+            "target": "io_uring",
+            "client_number": 1000,
+            "duration_seconds": 60,
+            "message_length": 1024
+        },
+        "test_result": {
+            "request_per_second": 158309
+        }
+    },
+    {
+        "record_time": "2024-11-09T15:35:13.537717",
+        "target_attributes": {
+            "target": "epoll",
+            "client_number": 1000,
+            "duration_seconds": 60,
+            "message_length": 1024
+        },
+        "test_result": {
+            "request_per_second": 161900
+        }
+    }
+]
