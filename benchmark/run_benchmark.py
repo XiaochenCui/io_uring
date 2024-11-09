@@ -38,6 +38,15 @@ def bench_a():
             f"c++ {CPP_FILE} -o {BIN_FILE} -Wall -O2 -D_GNU_SOURCE -luring -I{INCLUDE_DIR} -L{LIB_DIR}"
         )
 
+        # compile io_uring echo server (with kernel poll)
+        INCLUDE_DIR = "/home/xiaochen/lib/liburing/include"
+        LIB_DIR = "/home/xiaochen/lib/liburing/lib"
+        CPP_FILE = "./benchmark/echo_server_io_uring_kernel_poll.cpp"
+        BIN_FILE = "./build/echo_server_io_uring_kernel_poll"
+        xiaochen_py.run_command(
+            f"c++ {CPP_FILE} -o {BIN_FILE} -Wall -O2 -D_GNU_SOURCE -luring -I{INCLUDE_DIR} -L{LIB_DIR}"
+        )
+
         # compile epoll echo server
         CPP_FILE = "./benchmark/echo_server_epoll.cpp"
         BIN_FILE = "./build/echo_server_epoll"
@@ -47,6 +56,8 @@ def bench_a():
         CPP_FILE = "./benchmark/echo_server_select.cpp"
         BIN_FILE = "./build/echo_server_select"
         xiaochen_py.run_command(f"c++ {CPP_FILE} -o {BIN_FILE} -Wall -O2 -D_GNU_SOURCE")
+
+    setup()
 
     PORT = 8080
     ECHO_CLIENT_DIR = os.path.join(CODE_DIR, "rust_echo_bench")
@@ -97,10 +108,9 @@ def bench_a():
 
         return r
 
-    setup()
-
     client_number_list = [1, 200, 400, 600, 800, 1000]
-    message_length_list = [1, 128, 1024]
+    # message_length_list = [1, 128, 1024]
+    message_length_list = [1024]
     duration_seconds = 60
 
     records = []
@@ -123,12 +133,21 @@ def bench_a():
             )
             records.append(r)
             r = run(
+                "io_uring_kernel_poll",
+                "./build/echo_server_io_uring_kernel_poll",
+                client_number,
+                duration_seconds,
+                message_length,
+            )
+            records.append(r)
+            r = run(
                 "select",
                 "./build/echo_server_select",
                 client_number,
                 duration_seconds,
                 message_length,
             )
+            records.append(r)
 
     xiaochen_py.dump_records(records, "docs/record")
 
