@@ -12,7 +12,7 @@
 ### Run Benchmark
 
 ```
-make run_benchmark
+bazel run //:run_benchmark
 ```
 
 ### Show Details

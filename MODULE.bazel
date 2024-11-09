@@ -4,3 +4,10 @@
 #
 # For more details, please check https://github.com/bazelbuild/bazel/issues/18958
 ###############################################################################
+
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name = "liburing",
+    urls = ["https://github.com/axboe/liburing/archive/refs/tags/liburing-2.8.tar.gz"],
+)
