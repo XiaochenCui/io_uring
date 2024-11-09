@@ -140,37 +140,5 @@ def bench_a():
     xiaochen_py.dump_records(records, "docs/record")
 
 
-def draw():
-    report_path = get_latest_report()
-
-    # parse the json to list(BenchmarkRecord)
-    f = open(report_path, "r")
-    all_records = json.load(f, object_hook=lambda x: xiaochen_py.json_loader(**x))
-
-    points_list = []
-
-    records = list(all_records)
-
-    # sort by thread_count
-    records.sort(key=lambda x: x.target_attributes["thread_count"])
-
-    thread_count_list = [r.target_attributes["thread_count"] for r in records]
-    insert_per_second = [r.test_result["insert_per_second"] for r in records]
-
-    plt.plot(thread_count_list, insert_per_second)
-    points = plt.scatter(thread_count_list, insert_per_second)
-    points_list.append(points)
-
-    plt.xlabel("Concurrent Transactions")
-    plt.ylabel("Insertions per Second")
-
-    top = max([r.test_result["insert_per_second"] for r in all_records]) * 1.3
-    plt.ylim(bottom=0, top=top)
-
-    plt.legend(handles=points_list, loc="upper right")
-
-    plt.savefig(f"./docs/img/insertions_per_second_{xiaochen_py.timestamp()}.png")
-
-
 if __name__ == "__main__":
     bench_a()
