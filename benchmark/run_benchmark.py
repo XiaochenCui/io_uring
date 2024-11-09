@@ -37,7 +37,7 @@ def bench_a():
 
     PORT = 8080
     CLIENTS_NUMBER = 300
-    DURATION_SECONDS = 30
+    DURATION_SECONDS = 5
     MESSAGE_LENGTH = 128
 
     ECHO_CLIENT_DIR = os.path.join(CODE_DIR, "rust_echo_bench")
@@ -76,5 +76,4 @@ def bench_a():
 
 
 if __name__ == "__main__":
-    # bench_a()
-    print("abc")
+    bench_a()
