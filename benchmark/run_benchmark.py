@@ -64,6 +64,7 @@ def bench_a():
 
         server = xiaochen_py.run_background(
             f"{binary} {PORT}",
+            log_path=f"./{target}_server.log",
             work_dir=IO_URING_RESEARCH_DIR,
         )
 
