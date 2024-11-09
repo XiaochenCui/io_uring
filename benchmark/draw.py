@@ -24,8 +24,9 @@ def draw():
 
     target_list = set(r.target_attributes["target"] for r in all_records)
 
-    points_list = []
     for message_length in message_length_list:
+        plt.figure()
+        points_list = []
         for target in target_list:
             # filter the records by message_length and target
             records = list(
