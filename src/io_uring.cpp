@@ -17,6 +17,9 @@ int io_uring_init_2(struct io_uring &ring)
 {
     struct io_uring_params params;
     memset(&params, 0, sizeof(params));
+
+    params.flags |= IORING_SETUP_SQPOLL;
+
     int result = io_uring_queue_init_params(2048, &ring, &params);
     if (result != 0)
     {

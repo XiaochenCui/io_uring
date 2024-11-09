@@ -76,4 +76,5 @@ def bench_a():
 
 
 if __name__ == "__main__":
-    bench_a()
+    # bench_a()
+    print()

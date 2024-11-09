@@ -1,5 +1,6 @@
 {
     "C_Cpp.default.includePath": [
         "/home/xiaochen/lib/liburing/include"
-    ]
+    ],
+    "github.copilot.editor.enableAutoCompletions": true
 }
