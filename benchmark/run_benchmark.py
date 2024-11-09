@@ -42,30 +42,36 @@ def bench_a():
         BIN_FILE = "./build/echo_server_epoll"
         xiaochen_py.run_command(f"c++ {CPP_FILE} -o {BIN_FILE} -Wall -O2 -D_GNU_SOURCE")
 
+        # compile select echo server
+        CPP_FILE = "./benchmark/echo_server_select.cpp"
+        BIN_FILE = "./build/echo_server_select"
+        xiaochen_py.run_command(f"c++ {CPP_FILE} -o {BIN_FILE} -Wall -O2 -D_GNU_SOURCE")
+
     PORT = 8080
     ECHO_CLIENT_DIR = os.path.join(CODE_DIR, "rust_echo_bench")
 
-    def run_io_uring(
+    def run(
+        target: str,
+        binary: str,
         client_number: int,
         duration_seconds: int,
         message_length: int,
     ) -> xiaochen_py.BenchmarkRecord:
-        io_uring_echo_server = xiaochen_py.run_background(
-            f"./build/echo_server_io_uring {PORT}",
-            log_path="echo_server_io_uring.log",
+        server = xiaochen_py.run_background(
+            f"{binary} {PORT}",
             work_dir=IO_URING_RESEARCH_DIR,
         )
 
         # bind io_uring_echo_server to CPU 0
         xiaochen_py.run_command(
-            f"taskset -cp 0 {io_uring_echo_server.pid}",
+            f"taskset -cp 0 {server.pid}",
         )
 
         output, _ = xiaochen_py.run_command(
             f"cargo run --release -- --address 'localhost:{PORT}' --number {client_number} --duration {duration_seconds} --length {message_length}",
             work_dir=ECHO_CLIENT_DIR,
         )
-        io_uring_echo_server.exit()
+        server.exit()
 
         # sample output: Speed: 152720 request/sec, 152720 response/sec
         speed = re.search(r"Speed: (\d+) request/sec", output.decode("utf-8")).group(1)
@@ -73,46 +79,7 @@ def bench_a():
 
         r = xiaochen_py.BenchmarkRecord()
         r.target_attributes = {
-            "target": "io_uring",
-            "client_number": client_number,
-            "duration_seconds": duration_seconds,
-            "message_length": message_length,
-        }
-        r.test_result = {
-            "request_per_second": int(speed),
-        }
-
-        return r
-
-    def run_epoll(
-        client_number: int,
-        duration_seconds: int,
-        message_length: int,
-    ) -> xiaochen_py.BenchmarkRecord:
-        epoll_echo_server = xiaochen_py.run_background(
-            f"./build/echo_server_epoll {PORT}",
-            log_path="echo_server_epoll.log",
-            work_dir=IO_URING_RESEARCH_DIR,
-        )
-
-        # bind epoll_echo_server to CPU 1
-        xiaochen_py.run_command(
-            f"taskset -cp 1 {epoll_echo_server.pid}",
-        )
-
-        output, _ = xiaochen_py.run_command(
-            f"cargo run --release -- --address 'localhost:{PORT}' --number {client_number} --duration {duration_seconds} --length {message_length}",
-            work_dir=ECHO_CLIENT_DIR,
-        )
-        epoll_echo_server.exit()
-
-        # sample output: Speed: 152720 request/sec, 152720 response/sec
-        speed = re.search(r"Speed: (\d+) request/sec", output.decode("utf-8")).group(1)
-        print(f"Speed: {speed} request/sec")
-
-        r = xiaochen_py.BenchmarkRecord()
-        r.target_attributes = {
-            "target": "epoll",
+            "target": target,
             "client_number": client_number,
             "duration_seconds": duration_seconds,
             "message_length": message_length,
@@ -127,15 +94,35 @@ def bench_a():
 
     client_number_list = [1, 200, 400, 600, 800, 1000]
     message_length_list = [1, 128, 1024]
-    duration_seconds = 20
+    duration_seconds = 5
 
     records = []
     for client_number in client_number_list:
         for message_length in message_length_list:
-            r = run_io_uring(client_number, duration_seconds, message_length)
+            r = run(
+                "io_uring",
+                "./build/echo_server_io_uring",
+                client_number,
+                duration_seconds,
+                message_length,
+            )
             records.append(r)
-            r = run_epoll(client_number, duration_seconds, message_length)
+            r = run(
+                "epoll",
+                "./build/echo_server_epoll",
+                client_number,
+                duration_seconds,
+                message_length,
+            )
             records.append(r)
+            r = run(
+                "select",
+                "./build/echo_server_select",
+                client_number,
+                duration_seconds,
+                message_length,
+            )
+        break
 
     xiaochen_py.dump_records(records, "docs/record")
 
