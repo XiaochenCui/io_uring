@@ -127,16 +127,17 @@ def bench_a():
 
     client_number_list = [1, 200, 400, 600, 800, 1000]
     message_length_list = [1, 128, 1024]
+    duration_seconds = 20
 
     records = []
     for client_number in client_number_list:
         for message_length in message_length_list:
-            r = run_io_uring(client_number, 5, message_length)
+            r = run_io_uring(client_number, duration_seconds, message_length)
             records.append(r)
-            r = run_epoll(client_number, 5, message_length)
+            r = run_epoll(client_number, duration_seconds, message_length)
+            records.append(r)
 
     xiaochen_py.dump_records(records, "docs/record")
-
 
 
 def draw():
