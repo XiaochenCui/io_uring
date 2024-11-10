@@ -168,11 +168,10 @@ def bench_b():
     # fio --name=benchmark --ioengine=aio --direct=1 --size=1G --bs=4k --rw=randread --numjobs=1 --time_based --runtime=10s --filename=testfile
     # fio --name=benchmark --ioengine=direct --direct=1 --size=1G --bs=4k --rw=randread --numjobs=1 --time_based --runtime=10s --filename=testfile
 
-    # make the job run exactly 10 seconds when combined with "--time_based"
-    runtime = "10s"
+    # # make the job run exactly 10 seconds when combined with "--time_based"
+    # runtime = "10s"
 
-    # size_mb = "1024"  # total size of io, in mb
-    size_mb = "10"  # total size of io, in mb
+    size_mb = "1024"  # total size of io, in mb
 
     ioengine_list = ["sync", "psync", "io_uring", "libaio", "mmap", "pvsync"]
 
@@ -191,9 +190,9 @@ def bench_b():
     DATA_DIR = "/media/xiaochen/large/cs_data/io_uring_test"
 
     records = []
-    for ioengine in ioengine_list:
-        for readwrite in readwrite_options:
-            for direct in direct_options:
+    for readwrite in readwrite_options:
+        for direct in direct_options:
+            for ioengine in ioengine_list:
                 fio_command = f"fio --name=benchmark --ioengine={ioengine} --direct={direct} --size={size_mb}M --bs=4k --rw={readwrite} --numjobs=1 --filename=testfile"
                 output, _ = xiaochen_py.run_command(fio_command, work_dir=DATA_DIR)
 
@@ -202,19 +201,21 @@ def bench_b():
                 # - bw=840MiB/s
                 # - bw=123.4KiB/s
                 # - bw=123KiB/s
-                groups = re.search(
+                groups = re.findall(
                     r"bw=(\d+\.?\d*)([KMG]iB/s)", output.decode("utf-8")
-                ).groups()
-                number = float(groups[0])
-                unit = groups[1]
+                )
 
-                bandwidth_mb = 0
-                if unit == "KiB/s":
-                    bandwidth_mb = number / 1024
-                if unit == "MiB/s":
-                    bandwidth_mb = number
-                if unit == "GiB/s":
-                    bandwidth_mb = number * 1024
+                if len(groups) < 1:
+                    print(f"groups: {groups}")
+                    print(f"output: {output}")
+                    print(f"command: {fio_command}")
+                    raise Exception("no bandwidth found")
+
+                total_bandwidth = 0
+                for group in groups:
+                    total_bandwidth += get_bandwidth_mb(group)
+
+                print(f"bandwidth: {total_bandwidth} MB/s")
 
                 r = xiaochen_py.BenchmarkRecord()
                 r.target_attributes = {
@@ -224,11 +225,26 @@ def bench_b():
                     "direct": direct,
                 }
                 r.test_result = {
-                    "bandwidth_mb": bandwidth_mb,
+                    "bandwidth_mb": total_bandwidth,
                 }
                 records.append(r)
     os.chdir(IO_URING_RESEARCH_DIR)
     xiaochen_py.dump_records(records, "./docs/record/disk/")
+
+
+def get_bandwidth_mb(group) -> float:
+    number = float(group[0])
+    unit = group[1]
+
+    bandwidth_mb = 0
+    if unit == "KiB/s":
+        bandwidth_mb = number / 1024
+    if unit == "MiB/s":
+        bandwidth_mb = number
+    if unit == "GiB/s":
+        bandwidth_mb = number * 1024
+
+    return bandwidth_mb
 
 
 if __name__ == "__main__":
