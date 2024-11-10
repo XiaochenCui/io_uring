@@ -193,6 +193,16 @@ def bench_b():
     for readwrite in readwrite_options:
         for direct in direct_options:
             for ioengine in ioengine_list:
+                print(
+                    "=====================================================",
+                    file=sys.stdout,
+                    flush=True,
+                )
+                print(
+                    f"ioengine: {ioengine}, direct: {direct}, readwrite: {readwrite}",
+                    file=sys.stdout,
+                    flush=True,
+                )
                 fio_command = f"fio --name=benchmark --ioengine={ioengine} --direct={direct} --size={size_mb}M --bs=4k --rw={readwrite} --numjobs=1 --filename=testfile"
                 output, _ = xiaochen_py.run_command(fio_command, work_dir=DATA_DIR)
 

@@ -22,5 +22,8 @@ bazel-*
 # cpp binaries
 build/
 
-# test outputs
+# test logs
 *.log
+
+# test logs
+out
