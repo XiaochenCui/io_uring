@@ -5,8 +5,8 @@ from matplotlib import pyplot as plt
 import xiaochen_py
 
 
-def draw():
-    report_path = xiaochen_py.get_latest_report("./docs/record")
+def draw_echo_server():
+    report_path = xiaochen_py.get_latest_report("./docs/record/echo_server")
 
     # parse the json to list(BenchmarkRecord)
     f = open(report_path, "r")
@@ -70,5 +70,61 @@ def draw():
         )
 
 
+def draw_disk():
+    report_path = xiaochen_py.get_latest_report("./docs/record/disk")
+
+    f = open(report_path, "r")
+    all_records = json.load(f, object_hook=lambda x: xiaochen_py.json_loader(**x))
+
+    colors = ["blue", "green", "red", "cyan", "magenta", "yellow", "black"]
+
+    readwrite_options = list(set(r.target_attributes["readwrite"] for r in all_records))
+    readwrite_options.sort()
+
+    direct_options = list(set(r.target_attributes["direct"] for r in all_records))
+    direct_options.sort()
+
+    for direct in direct_options:
+        for readwrite in readwrite_options:
+            plt.figure()
+
+            # filter the records by direct and readwrite
+            records = list(
+                filter(
+                    lambda x: x.target_attributes["direct"] == direct
+                    and x.target_attributes["readwrite"] == readwrite,
+                    all_records,
+                )
+            )
+
+            targets = list(set(r.target_attributes["target"] for r in records))
+            targets.sort()
+
+            bandwidth = []
+            for target in targets:
+                v = set(
+                    r.test_result["bandwidth_mb"]
+                    for r in records
+                    if r.target_attributes["target"] == target
+                )
+                if len(v) != 1:
+                    raise Exception("bandwidth_mb is not unique")
+                bandwidth.append(v.pop())
+
+            plt.bar(targets, bandwidth, label=targets, color=colors[: len(targets)])
+
+            plt.ylabel("bandwidth (MB/s)")
+
+            plt.title(f"disk {readwrite} (direct={direct})")
+
+            top = max(bandwidth) * 1.1
+            plt.ylim(top=top)
+
+            plt.savefig(
+                f"./docs/img/disk_{readwrite}_{direct}_{xiaochen_py.timestamp()}.png"
+            )
+
+
 if __name__ == "__main__":
-    draw()
+    # draw_echo_server()
+    draw_disk()
