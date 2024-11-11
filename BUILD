@@ -3,6 +3,11 @@ py_binary(
     srcs = ["benchmark/run_benchmark.py"],
 )
 
+py_binary(
+    name = "gen_graph",
+    srcs = ["benchmark/draw.py"],
+)
+
 cc_library(
     name = "liburing",
     hdrs = glob(["liburing/include/liburing.h"]),

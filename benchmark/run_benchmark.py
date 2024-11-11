@@ -171,7 +171,10 @@ def bench_b():
     # # make the job run exactly 10 seconds when combined with "--time_based"
     # runtime = "10s"
 
-    size_mb = "1024"  # total size of io, in mb
+    # too slow
+    # size_mb = "1024"  # total size of io, in mb
+
+    size_mb = "200"  # total size of io, in mb
 
     ioengine_list = ["sync", "psync", "io_uring", "libaio", "mmap", "pvsync"]
 
@@ -193,6 +196,8 @@ def bench_b():
     for readwrite in readwrite_options:
         for direct in direct_options:
             for ioengine in ioengine_list:
+                fio_command = f"fio --name=benchmark --ioengine={ioengine} --direct={direct} --size={size_mb}M --bs=4k --rw={readwrite} --numjobs=1 --filename=testfile"
+
                 print(
                     "=====================================================",
                     file=sys.stdout,
@@ -203,7 +208,12 @@ def bench_b():
                     file=sys.stdout,
                     flush=True,
                 )
-                fio_command = f"fio --name=benchmark --ioengine={ioengine} --direct={direct} --size={size_mb}M --bs=4k --rw={readwrite} --numjobs=1 --filename=testfile"
+                print(
+                    f"fio_command: {fio_command}",
+                    file=sys.stdout,
+                    flush=True,
+                )
+
                 output, _ = xiaochen_py.run_command(fio_command, work_dir=DATA_DIR)
 
                 # sample output:
