@@ -15,6 +15,14 @@
 bazel run //:run_benchmark
 ```
 
+### Generate Benchmark Report
+
+Generate graphs from the benchmark results.
+
+```
+bazel run //:gen_report
+```
+
 ### Show Details
 
 ```

@@ -4,8 +4,8 @@ py_binary(
 )
 
 py_binary(
-    name = "gen_graph",
-    srcs = ["benchmark/draw.py"],
+    name = "gen_report",
+    srcs = ["benchmark/gen_report.py"],
 )
 
 cc_library(
@@ -18,7 +18,7 @@ cc_library(
 cc_binary(
     name = "echo_server_io_uring",
     srcs = ["benchmark/echo_server_io_uring.cpp"],
-    deps = [":liburing"],
     copts = ["-Iliburing/include"],
     linkopts = ["-luring"],
+    deps = [":liburing"],
 )
